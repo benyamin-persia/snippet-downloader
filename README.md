@@ -1,4 +1,4 @@
-Below is an example of a README.md file for GitHub. You can adjust details such as the project name, description, or usage instructions as needed:
+Below is an updated version of the README.md file with an added section that explains how to obtain a valid PowerShell snippet from the browser's Developer Tools.
 
 ---
 
@@ -12,6 +12,7 @@ A Python application that reads PowerShell snippets from a CSV file, extracts do
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [File Structure](#file-structure)
+- [Obtaining a Valid PowerShell Snippet](#obtaining-a-valid-powershell-snippet)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
 - [Customization](#customization)
@@ -32,23 +33,29 @@ A Python application that reads PowerShell snippets from a CSV file, extracts do
   Downloads AAC files using a progress bar and retries on errors. It skips files that have already been downloaded.
 
 - **Custom File Naming:**  
-  Prompts the user for a base file name. If a number is provided, it will increment that number for subsequent files. Otherwise, it appends an underscore and a number.
+  Prompts the user for a base file name. If a number is provided, it will use that as a starting point and increment it (e.g., if you enter `21`, files will be named `21.aac`, `22.aac`, etc.). If you enter a non-numeric string, it will append an underscore and an incrementing number (e.g., `myaudio_1.aac`, `myaudio_2.aac`, etc.).
 
 ## Prerequisites
 
 - Python 3.6 or later
 - pip (Python package installer)
 
+Install the required packages by running:
+
+```bash
+pip install pandas requests tqdm
+```
+
 ## Installation
 
-1. **Clone the repository:**
+1. **Clone the Repository:**
 
    ```bash
    git clone https://github.com/yourusername/powershell-snippet-downloader.git
    cd powershell-snippet-downloader
    ```
 
-2. **Install required packages:**
+2. **Install Required Packages:**
 
    ```bash
    pip install pandas requests tqdm
@@ -65,21 +72,27 @@ powershell-snippet-downloader/
 └── README.md               # This file
 ```
 
+## Obtaining a Valid PowerShell Snippet
+
+To ensure the snippet you use contains valid, live authentication details, follow these steps:
+
+1. Open your browser and navigate to the page where the audio file is being synthesized.
+2. Open the Developer Tools (usually by pressing F12 or right-clicking the page and selecting "Inspect").
+3. Go to the **Network** tab.
+4. Wait until the synthesizing message finishes loading—look for a network request that eventually returns a status code of **200**, which indicates that the full audio file is ready.
+5. Once you see the 200 status code, right-click on that network request.
+6. From the context menu, select **"Copy as PowerShell"**.
+7. Paste the copied snippet into your CSV file in the **snippet** column.
+
+This method ensures that the snippet contains all the current session details (tokens, cookies, headers) required for the file download.
+
 ## Usage
 
 1. **Prepare Your CSV File:**
 
    - Create or update `acclink.csv` in the project directory.
    - Ensure it contains a column named **snippet**.
-   - Each row in this column should have the full PowerShell snippet used for configuration and downloading.
-   - Instructions to Obtain a Valid PowerShell Snippet for Downloading the Full Audio File:
-      1 Open your browser and navigate to the page where the audio file is being synthesized.
-      2 Open the Developer Tools (usually by pressing F12 or right-clicking the page and selecting "Inspect").
-      3 Go to the Network tab.
-      4 Wait until the synthesizing message finishes loading—look for a network request that eventually returns a status code of 200, which indicates the complete audio file is ready.
-      5 Once you see the 200 status code, right-click on that network request.
-      6 From the context menu, select "Copy as PowerShell".
-      7 Paste the copied snippet into your CSV file (or wherever needed).
+   - Each row in this column should contain the complete PowerShell snippet (obtained as described above).
 
 2. **Run the Application:**
 
@@ -89,44 +102,46 @@ powershell-snippet-downloader/
    python main.py
    ```
 
-3. **Enter Base Name:**
+3. **Enter the Base Name:**
 
    - The program will prompt:  
      `Enter the base name for the AAC files (if a number, it will be incremented):`
-   - If you enter a number (e.g., `21`), the downloaded files will be named `21.aac`, `22.aac`, etc.
-   - If you enter a string (e.g., `myaudio`), files will be named `myaudio_1.aac`, `myaudio_2.aac`, etc.
+   - If you enter a number (e.g., `21`), the files will be named `21.aac`, `22.aac`, `23.aac`, etc.
+   - If you enter a string (e.g., `myaudio`), the files will be named `myaudio_1.aac`, `myaudio_2.aac`, etc.
 
 4. **Monitor the Process:**
 
-   - The application will process each snippet, print debug information, and set up the HTTP session.
-   - Files that have already been downloaded will be skipped.
-   - A progress bar shows the download progress for each file.
+   - The application processes each snippet, printing debug information (raw snippet, cleaned snippet, extracted URL, configuration, and additional headers).
+   - A requests session is configured using these values.
+   - Files that already exist are skipped.
+   - A progress bar displays the download progress for each file.
 
 ## Troubleshooting
 
 - **403 Forbidden Errors:**  
-  If you encounter a 403 error, ensure that the tokens and cookies in your CSV snippet are fresh and valid. Compare the headers and cookies with those sent by a working PowerShell session.
+  If you encounter a 403 error, ensure that the tokens and cookies in your CSV snippet are fresh and valid. Use the instructions in the "Obtaining a Valid PowerShell Snippet" section to get a live snippet.
 
 - **File Not Downloading:**  
-  Verify that the CSV is correctly formatted with the proper column name and that the snippet is complete.
+  Verify that the CSV is formatted correctly with a column named **snippet** and that the snippet contains all the necessary details.
 
 - **Existing Files:**  
-  The app automatically skips files that already exist. If you want to re-download, either remove the file or use a different base name.
+  The app skips files that already exist. Remove or rename the existing files if you wish to re-download them.
 
 ## Customization
 
-- **Update Parsing Logic:**  
-  If your PowerShell snippet format changes, modify `snippet_parser.py` accordingly.
+- **Parsing Logic:**  
+  If the PowerShell snippet format changes, update the functions in `snippet_parser.py` accordingly.
 
-- **Enhance Error Handling:**  
-  You can add more robust error handling or logging in `downloader.py`.
+- **Download Parameters:**  
+  You can adjust the retry mechanism and chunk size in `downloader.py`.
 
 - **Live Authentication:**  
-  For dynamic sessions, consider integrating a live authentication step rather than using static tokens from the CSV.
+  For dynamic sessions, consider integrating a live authentication flow rather than using static tokens from the CSV.
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+---
 
-♥
+Feel free to modify this README.md file to better suit your project's needs.
