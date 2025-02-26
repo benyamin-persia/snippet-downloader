@@ -72,6 +72,14 @@ powershell-snippet-downloader/
    - Create or update `acclink.csv` in the project directory.
    - Ensure it contains a column named **snippet**.
    - Each row in this column should have the full PowerShell snippet used for configuration and downloading.
+   - Instructions to Obtain a Valid PowerShell Snippet for Downloading the Full Audio File:
+      1 Open your browser and navigate to the page where the audio file is being synthesized.
+      2 Open the Developer Tools (usually by pressing F12 or right-clicking the page and selecting "Inspect").
+      3 Go to the Network tab.
+      4 Wait until the synthesizing message finishes loading—look for a network request that eventually returns a status code of 200, which indicates the complete audio file is ready.
+      5 Once you see the 200 status code, right-click on that network request.
+      6 From the context menu, select "Copy as PowerShell".
+      7 Paste the copied snippet into your CSV file (or wherever needed).
 
 2. **Run the Application:**
 
